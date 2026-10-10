@@ -30,11 +30,13 @@ fun gameMenu() {
         val secretWord = "kotlin" // secret word user is trying to guess
         var incorrectGuesses = 0 // number of incorrect guesses user has made
         var tryAgain = true // boolean to use to determine if game continues
-//        var userWord = ""
-//        var character: String = "" // initialize character as string
-         // contains user entry for guessed letter
+        var userGuess: Char = ' '
         val incorrectLetters = mutableSetOf<Char>()
         val correctLetters = mutableSetOf<Char>()
+        val guessedLetters = mutableSetOf<Char>()
+        var validGuess = false
+
+         // contains user entry for guessed letter
 
         // while loop to repeat guesses until win or loss
             // display the secret word with _ when the letter has not been guessed
@@ -57,13 +59,21 @@ fun gameMenu() {
 //            for (letter in incorrectLetters) {
 //                print(letter)
 //            }
+            validGuess = false
 
-            // get the user's guess
-            println()
-            print("Guess a letter: ")
-            val userGuess: Char = readln()[0] // retrieve letter from user and save it in a variable
+            while (validGuess == false) {
+                println()
+                print("Guess a letter: ")
+                userGuess = readln()[0] // retrieve letter from user and save it in a variable
+                userGuess = userGuess.lowercaseChar()
 
-            userGuess.lowercaseChar()
+                if (userGuess in guessedLetters) {
+                    print("That letter has already been guessed.  Try again.")
+                } else {
+                    validGuess = true
+                }
+            }
+            guessedLetters.add(userGuess)
 
             if (userGuess in secretWord) {
                 correctLetters.add(userGuess)
@@ -85,19 +95,6 @@ fun gameMenu() {
                     playAgain()
                 }
             }
-
-//            // compare the current "word" with the secret word
-//            // conditional based on if word matches
-//            // if the guess does match, then declare the winner
-//            if (userGuess in secretWord) { // compare userGuess to secretWord
-//                println("You win!") // display win message
-//                tryAgain = false // set try again variable to false so game terminates
-//                gameMenu() // send user back to menu
-//                // if the guess doesn't match
-//                //check # of incorrect guesses
-//                // add letter to incorrect guess array
-//            }
-
         }
     }
 
@@ -121,10 +118,14 @@ fun displayHowTo(){
     }
 }
 
-fun playAgain(){
+fun playAgain() {
     print("Do you want to play again? y or n? ")
     val play: Char = readln()[0] // retrieve letter from user and save it in a variable
 
     play.lowercaseChar()
-    if (play == 'y') gameMenu() else exitProcess(0)
+    when (play) {
+        'y' -> gameMenu()
+        else -> exitProcess(0)
+    }
 }
+
