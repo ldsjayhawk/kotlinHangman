@@ -1,13 +1,12 @@
 import kotlin.system.exitProcess
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 fun main() {
     gameMenu()
 }
 
-
+// game menu //
+// read user input with selection variable
+// use when statement to call the next function
 fun gameMenu() {
     println("Welcome to Hangman!")
     println()
@@ -19,31 +18,31 @@ fun gameMenu() {
 
     when (selection) {
         1 -> startGame()
-        2 -> displayHowTo()
+        2 -> displayInstructions()
         3 -> exitProcess(0)
         else -> gameMenu()
     }
 }
 
+    // start game function //
     fun startGame(){
-        println("Shall we begin?")
+        // game variables //
         val words = setOf("hello","goodbye","stand","stormy","happy","phone")
         val secretWord = words.random() // secret word user is trying to guess
         var incorrectGuesses = 0 // number of incorrect guesses user has made
         var tryAgain = true // boolean to use to determine if game continues
-        var userGuess: Char = ' '
-        val incorrectLetters = mutableSetOf<Char>()
-        val correctLetters = mutableSetOf<Char>()
-        val guessedLetters = mutableSetOf<Char>()
-        var validGuess = false
+        var userGuess: Char = ' ' // variable to hold user guess
+        val incorrectLetters = mutableSetOf<Char>() // set to hold incorrect guesses
+        val correctLetters = mutableSetOf<Char>()  // set to hold correct guesses
+        val guessedLetters = mutableSetOf<Char>()  // set to hold all guesses
+        var validGuess = false // variable to determine if user input is needed
 
+        println("Shall we begin?")
          // contains user entry for guessed letter
 
-        // while loop to repeat guesses until win or loss
-            // display the secret word with _ when the letter has not been guessed
-
+        // while loop to display hint
+        // replaces letters with _ before they have been guessed
         while(tryAgain) {
-3
             var i = 0
             print("Word to guess: ")
             while (i < secretWord.length) {
@@ -60,14 +59,19 @@ fun gameMenu() {
 //            for (letter in incorrectLetters) {
 //                print(letter)
 //            }
+
+            // sets validGuess to false to enter loop to get user guess
             validGuess = false
 
+            // while loop gets users guess and
+            // determines if the letter has already been guessed
             while (validGuess == false) {
                 println()
                 print("Guess a letter: ")
-                userGuess = readln()[0] // retrieve letter from user and save it in a variable
+                userGuess = readln()[0] // retrieve letter from user
                 userGuess = userGuess.lowercaseChar()
 
+                // determine if letter has been guessed
                 if (userGuess in guessedLetters) {
                     print("That letter has already been guessed.  Try again.")
                 } else {
@@ -76,6 +80,8 @@ fun gameMenu() {
             }
             guessedLetters.add(userGuess)
 
+            // conditional to determine if the guess is in the secret word
+            // if it is, it will determine if the user has won
             if (userGuess in secretWord) {
                 correctLetters.add(userGuess)
                 if (secretWord.all{ letter -> letter in correctLetters}){
@@ -86,14 +92,16 @@ fun gameMenu() {
                     playAgain()
                 }
             } else {
-                incorrectGuesses++ // increase number of incorrect guesses by 1
+                // if the guess is not in the secret word
+                // stor guess and determine if the game is over
+                incorrectGuesses++
                 incorrectLetters.add(userGuess)
                 println()
                 print("You have made $incorrectGuesses incorrect guesses.  You have ${6 - incorrectGuesses} incorrect guesses remaining.")
                 println()
                 // determine if guesses are remaining
-                // if yes, return to next guess
-                // if no, display message and end game
+                // if yes, set try again to allow to guess again
+                // if no, display message and end game.  Offer user to play again
                 if (incorrectGuesses == 6) {
                     println("You lose! The word is $secretWord.")
                     println()
@@ -104,12 +112,15 @@ fun gameMenu() {
         }
     }
 
-fun displayHowTo(){
+// display instructions function //
+// Instructions on how to play
+fun displayInstructions(){
     println("HOW TO PLAY")
-    println("You are trying to guess the word represented by the blanks shown.")
-    println("You have 6 guesses to solve the word.  Blanks will be filed in as you make correct guesses.")
-    println("An incorrect guess will be displayed.")
-    println("If you guess the word within the requisite number of guesses you win.  Otherwise you lose.")
+    println("Try to guess the word represented by the blanks shown.")
+    println("Words are all common English words.")
+    println("Blanks will be filed in as you make correct guesses.")
+//    println("An incorrect guess will be displayed.")
+    println("If you guess the word before making 6 incorrect guesses you win.")
     println("Press 'r' to return to main menu")
 
     var done = readln()
@@ -120,15 +131,18 @@ fun displayHowTo(){
     if (done == "r") {
         gameMenu()
     } else {
-        displayHowTo()
+        displayInstructions()
     }
 }
 
+// play again function
+// determines if user wants to play again and restarts or exits the game
 fun playAgain() {
     print("Do you want to play again? y or n? ")
     val play: Char = readln()[0] // retrieve letter from user and save it in a variable
 
     play.lowercaseChar()
+
     when (play) {
         'y' -> gameMenu()
         else -> exitProcess(0)
