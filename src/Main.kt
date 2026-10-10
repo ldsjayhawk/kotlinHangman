@@ -27,7 +27,8 @@ fun gameMenu() {
 
     fun startGame(){
         println("Shall we begin?")
-        val secretWord = "kotlin" // secret word user is trying to guess
+        val words = setOf("hello","goodbye","stand","stormy","happy","phone")
+        val secretWord = words.random() // secret word user is trying to guess
         var incorrectGuesses = 0 // number of incorrect guesses user has made
         var tryAgain = true // boolean to use to determine if game continues
         var userGuess: Char = ' '
@@ -42,7 +43,7 @@ fun gameMenu() {
             // display the secret word with _ when the letter has not been guessed
 
         while(tryAgain) {
-
+3
             var i = 0
             print("Word to guess: ")
             while (i < secretWord.length) {
@@ -78,19 +79,24 @@ fun gameMenu() {
             if (userGuess in secretWord) {
                 correctLetters.add(userGuess)
                 if (secretWord.all{ letter -> letter in correctLetters}){
+                    println()
+                    println("$secretWord is correct!")
                     println("Congratulations! You win!")
+                    println()
                     playAgain()
                 }
             } else {
                 incorrectGuesses++ // increase number of incorrect guesses by 1
                 incorrectLetters.add(userGuess)
+                println()
                 print("You have made $incorrectGuesses incorrect guesses.  You have ${6 - incorrectGuesses} incorrect guesses remaining.")
                 println()
                 // determine if guesses are remaining
                 // if yes, return to next guess
                 // if no, display message and end game
                 if (incorrectGuesses == 6) {
-                    println("You lose!")
+                    println("You lose! The word is $secretWord.")
+                    println()
                     tryAgain = false
                     playAgain()
                 }
