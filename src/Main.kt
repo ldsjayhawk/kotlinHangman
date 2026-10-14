@@ -6,8 +6,8 @@ fun main() {
 }
 
 // game menu //
-// read user input with selection variable
-// use when statement to call the next function
+// displays game menu
+// uses user response to call the requested function
 fun gameMenu() {
     println("Welcome to Hangman!")
     println()
@@ -25,16 +25,35 @@ fun gameMenu() {
     }
 }
 
+class HangmanWord (val secretWord: String) {
+    val correctLetters = mutableSetOf<Char>()  // set to hold correct guesses
+
+    // function checks if letter is in the secret word
+    fun guessLetter(letter: Char):Boolean {
+        if (letter in secretWord) {
+            correctLetters.add(letter)
+            return true
+        }
+        return false
+    }
+
+    // function checks if secret word has been guessed
+    fun isWordGuessed(): Boolean{
+        return secretWord.all { letter -> letter in correctLetters }
+    }
+}
+
     // start game function //
+    // contains main game functionality
     fun startGame(){
         // game variables //
         val listOfWords = readFile("Words.txt")
         val secretWord = listOfWords.random() // secret word user is trying to guess
+        val gameWord = HangmanWord(secretWord)
         var incorrectGuesses = 0 // number of incorrect guesses user has made
         var tryAgain = true // boolean to use to determine if game continues
-        var userGuess: Char = ' ' // variable to hold user guess
+        var userGuess = ' ' // variable to hold user guess
         val incorrectLetters = mutableSetOf<Char>() // set to hold incorrect guesses
-        val correctLetters = mutableSetOf<Char>()  // set to hold correct guesses
         val guessedLetters = mutableSetOf<Char>()  // set to hold all guesses
         var validGuess = false // variable to determine if user input is needed
 
@@ -55,7 +74,7 @@ fun gameMenu() {
             print("Word to guess: ")
             while (i < secretWord.length) {
                 val letter = secretWord[i]
-                if (letter in correctLetters) {
+                if (letter in gameWord.correctLetters) {
                     print(letter)
                 } else {
                     print("_")
@@ -87,9 +106,8 @@ fun gameMenu() {
 
             // conditional to determine if the guess is in the secret word
             // if it is, it will determine if the user has won
-            if (userGuess in secretWord) {
-                correctLetters.add(userGuess)
-                if (secretWord.all{ letter -> letter in correctLetters}){
+            if (gameWord.guessLetter(userGuess)) {
+                if (gameWord.isWordGuessed()){
                     println()
                     println("$secretWord is correct!")
                     println("Congratulations! You win!")
@@ -118,14 +136,15 @@ fun gameMenu() {
         }
     }
 
+// function to read file containing words to be used in the game
+// stores words in a set for use in the game
 fun readFile(fileName: String): MutableSet<String>{
     val words = mutableSetOf<String>()  // set to hold all guesses
     File(fileName).forEachLine { line -> words.add(line.trim()) }
     return words
 }
 
-// display instructions function //
-// Instructions on how to play
+// displays instructions on how to play
 fun displayInstructions(){
     println("HOW TO PLAY")
     println("Try to guess the word represented by the blanks shown.")
@@ -147,7 +166,6 @@ fun displayInstructions(){
     }
 }
 
-// play again function
 // determines if user wants to play again and restarts or exits the game
 fun playAgain() {
     print("Do you want to play again? y or n? ")
