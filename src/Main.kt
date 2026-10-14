@@ -15,13 +15,16 @@ fun gameMenu() {
     println("2. Instructions")
     println("3. Exit")
 
-    val selection = readln().toInt()
+    val selection = readln().toIntOrNull()
 
     when (selection) {
         1 -> startGame()
         2 -> displayInstructions()
         3 -> exitProcess(0)
-        else -> gameMenu()
+        else -> {
+            println("Invalid selection.  Please select 1, 2 or 3.")
+            gameMenu()
+        }
     }
 }
 
