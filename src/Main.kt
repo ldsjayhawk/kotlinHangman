@@ -1,4 +1,5 @@
 import kotlin.system.exitProcess
+import java.io.File
 
 fun main() {
     gameMenu()
@@ -27,8 +28,8 @@ fun gameMenu() {
     // start game function //
     fun startGame(){
         // game variables //
-        val words = setOf("hello","goodbye","stand","stormy","happy","phone")
-        val secretWord = words.random() // secret word user is trying to guess
+        val listOfWords = readFile("Words.txt")
+        val secretWord = listOfWords.random() // secret word user is trying to guess
         var incorrectGuesses = 0 // number of incorrect guesses user has made
         var tryAgain = true // boolean to use to determine if game continues
         var userGuess: Char = ' ' // variable to hold user guess
@@ -44,6 +45,13 @@ fun gameMenu() {
         // replaces letters with _ before they have been guessed
         while(tryAgain) {
             var i = 0
+            print("Letters that have been guessed: ")
+            for (x in guessedLetters) {
+                print(x)
+                print(" ")
+            }
+            println()
+
             print("Word to guess: ")
             while (i < secretWord.length) {
                 val letter = secretWord[i]
@@ -54,13 +62,8 @@ fun gameMenu() {
                 }
                 i++
             }
-//            incorrectLetters.sort()
 
-//            for (letter in incorrectLetters) {
-//                print(letter)
-//            }
-
-            // sets validGuess to false to enter loop to get user guess
+            // sets validGuess = false to enter loop to get user guess
             validGuess = false
 
             // while loop gets users guess and
@@ -70,15 +73,17 @@ fun gameMenu() {
                 print("Guess a letter: ")
                 userGuess = readln()[0] // retrieve letter from user
                 userGuess = userGuess.lowercaseChar()
-
-                // determine if letter has been guessed
                 if (userGuess in guessedLetters) {
-                    print("That letter has already been guessed.  Try again.")
+                    print("$userGuess has already been guessed.  Try another letter.")
+                    println()
+                } else if (!userGuess.isLetter()){
+                    print("$userGuess is not a letter.  Please try again.")
+                    println()
                 } else {
+                    guessedLetters.add(userGuess)
                     validGuess = true
                 }
             }
-            guessedLetters.add(userGuess)
 
             // conditional to determine if the guess is in the secret word
             // if it is, it will determine if the user has won
@@ -97,7 +102,9 @@ fun gameMenu() {
                 incorrectGuesses++
                 incorrectLetters.add(userGuess)
                 println()
-                print("You have made $incorrectGuesses incorrect guesses.  You have ${6 - incorrectGuesses} incorrect guesses remaining.")
+                println("The letter '$userGuess' is not in the word.  ${6 - incorrectGuesses} incorrect guesses remaining.")
+            }
+
                 println()
                 // determine if guesses are remaining
                 // if yes, set try again to allow to guess again
@@ -108,9 +115,14 @@ fun gameMenu() {
                     tryAgain = false
                     playAgain()
                 }
-            }
         }
     }
+
+fun readFile(fileName: String): MutableSet<String>{
+    val words = mutableSetOf<String>()  // set to hold all guesses
+    File(fileName).forEachLine { line -> words.add(line.trim()) }
+    return words
+}
 
 // display instructions function //
 // Instructions on how to play
@@ -139,9 +151,9 @@ fun displayInstructions(){
 // determines if user wants to play again and restarts or exits the game
 fun playAgain() {
     print("Do you want to play again? y or n? ")
-    val play: Char = readln()[0] // retrieve letter from user and save it in a variable
+    var play: Char = readln()[0] // retrieve letter from user and save it in a variable
 
-    play.lowercaseChar()
+    play = play.lowercaseChar()
 
     when (play) {
         'y' -> gameMenu()
